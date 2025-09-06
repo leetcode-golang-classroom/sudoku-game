@@ -14,7 +14,7 @@ func TestNewGame(t *testing.T) {
 		{
 			name: "Empty Board",
 			wantBoard: &Board{
-				Cells: [9][9]Cell{
+				Cells: [9][9]*Cell{
 					{
 						{0, Empty}, {0, Empty}, {0, Empty},
 						{0, Empty}, {0, Empty}, {0, Empty},

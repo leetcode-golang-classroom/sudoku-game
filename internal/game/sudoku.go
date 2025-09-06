@@ -1,16 +1,21 @@
 package game
 
+const (
+	BoardSize = 9
+	BoxSize   = 3
+)
+
 // Board - 盤面
 type Board struct {
-	Cells [9][9]Cell
+	Cells [BoardSize][BoardSize]*Cell
 }
 
 // NewBoard 建立一個空的數獨盤面
 func NewBoard() *Board {
 	board := &Board{}
-	for row := 0; row < 9; row++ {
-		for col := 0; col < 9; col++ {
-			board.Cells[row][col] = Cell{Value: 0, Type: Empty}
+	for row := 0; row < BoardSize; row++ {
+		for col := 0; col < BoardSize; col++ {
+			board.Cells[row][col] = &Cell{Value: 0, Type: Empty}
 		}
 	}
 	return board
