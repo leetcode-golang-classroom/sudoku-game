@@ -23,12 +23,12 @@ func NewBoard() *Board {
 
 // Game - 遊戲結構
 type Game struct {
-	board *Board
+	Board *Board
 }
 
 // NewGame - 建構遊戲結構
 func NewGame() *Game {
 	return &Game{
-		board: NewBoard(),
+		Board: NewBoard(),
 	}
 }

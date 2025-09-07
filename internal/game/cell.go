@@ -4,9 +4,10 @@ package game
 type CellType int
 
 const (
-	Empty  CellType = iota // 空格
-	Preset                 // 題目預設的數字
-	Input                  // 玩家輸入的數字
+	Empty         CellType = iota // 空格
+	Preset                        // 題目預設的數字
+	Input                         // 玩家輸入的數字
+	InputConflict                 // 輸入數值有 conflict
 )
 
 // Cell 代表數獨的一個格子

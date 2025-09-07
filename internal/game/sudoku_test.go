@@ -67,7 +67,7 @@ func TestNewGame(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			game := NewGame()
-			assert.Equal(t, tt.wantBoard.Cells, game.board.Cells)
+			assert.Equal(t, tt.wantBoard.Cells, game.Board.Cells)
 		})
 	}
 }
