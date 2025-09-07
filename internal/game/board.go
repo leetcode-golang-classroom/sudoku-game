@@ -3,7 +3,7 @@ package game
 import "fmt"
 
 // 檢查 row, col 位置是否可以放置 num
-func (board *Board) isSafe(row, col, num int) bool {
+func (board *Board) IsSafe(row, col, num int) bool {
 	// 檢查行與列是否有放相同的值
 	for i := 0; i < BoardSize; i++ {
 		if board.Cells[row][i].Value == num ||
@@ -23,10 +23,6 @@ func (board *Board) isSafe(row, col, num int) bool {
 		}
 	}
 
-	// 檢查 num 值介於 1 到 9
-	if num < 1 || num > 9 {
-		return false
-	}
 	return true
 }
 

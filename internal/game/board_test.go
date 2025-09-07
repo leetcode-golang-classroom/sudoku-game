@@ -54,7 +54,7 @@ func TestIsSafe(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			board := tt.setup()
-			got := board.isSafe(tt.targetCoord.Row, tt.targetCoord.Col, tt.targetValue)
+			got := board.IsSafe(tt.targetCoord.Row, tt.targetCoord.Col, tt.targetValue)
 			assert.Equal(t, tt.want, got)
 		})
 	}

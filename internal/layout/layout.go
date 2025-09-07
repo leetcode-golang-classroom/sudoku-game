@@ -24,16 +24,40 @@ type GameLayout struct {
 }
 
 func (gameLayout *GameLayout) Update() error {
+	gameLayout.DetectCursor()
+	gameLayout.DetectInput()
 	return nil
 }
 
 func (gameLayout *GameLayout) Draw(screen *ebiten.Image) {
 	// 畫出基本背景
 	gameLayout.drawBoardBackground(screen)
+	// // 畫出 cursor
+	gameLayout.drawCursor(screen)
 	// 根據遊戲狀態來畫出盤面
 	gameLayout.drawCellValuesOnBoard(screen)
 	// 畫出盤面格線
 	gameLayout.drawLinesOnBoard(screen)
+}
+
+func (gameLayout *GameLayout) drawCursor(screen *ebiten.Image) {
+	cursorBgColor := color.RGBA{0xff, 0, 0, 128}
+	targetRow := gameLayout.gameInstance.Board.CursorRow
+	targetCol := gameLayout.gameInstance.Board.CursorCol
+	if gameLayout.gameInstance.Board.Cells[targetRow][targetCol].Type == game.Preset {
+		cursorBgColor = color.RGBA{0xff, 0xff, 0, 128}
+	}
+	if gameLayout.gameInstance.Board.Cells[targetRow][targetCol].Type == game.Input {
+		cursorBgColor = color.RGBA{0x00, 0xff, 0x00, 128}
+	}
+	if gameLayout.gameInstance.Board.Cells[targetRow][targetCol].Type == game.InputConflict {
+		cursorBgColor = color.RGBA{0x00, 0xff, 0xff, 128}
+	}
+	gameLayout.drawCellBackground(screen,
+		gameLayout.gameInstance.Board.CursorRow,
+		gameLayout.gameInstance.Board.CursorCol,
+		cursorBgColor,
+	)
 }
 
 // drawBoardBackground - 畫出盤面背景顏色
@@ -50,8 +74,13 @@ func (gameLayout *GameLayout) drawCellValuesOnBoard(screen *ebiten.Image) {
 	for row := 0; row < game.BoardSize; row++ {
 		for col := 0; col < game.BoardSize; col++ {
 			// draw preset value
-			if board.Cells[row][col].Type == game.Preset {
-				gameLayout.drawCellBackground(screen, row, col, getTileBgColor(board.Cells[row][col].Type))
+			if board.Cells[row][col].Type == game.Preset ||
+				board.Cells[row][col].Type == game.Input ||
+				board.Cells[row][col].Type == game.InputConflict {
+				if row != gameLayout.gameInstance.Board.CursorRow ||
+					col != gameLayout.gameInstance.Board.CursorCol {
+					gameLayout.drawCellBackground(screen, row, col, getTileBgColor(board.Cells[row][col].Type))
+				}
 				gameLayout.drawCellValue(screen, row, col, board.Cells[row][col].Value,
 					getTileColor(board.Cells[row][col].Type),
 				)

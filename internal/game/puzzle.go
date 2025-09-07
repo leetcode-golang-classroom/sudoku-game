@@ -20,7 +20,7 @@ func (board *Board) presetBoard() bool {
 	// 隨機取值出來填寫
 	for _, digit := range digitsShuffled() {
 		// 確認 digit 是否可以填入 row, col
-		if board.isSafe(row, col, digit) {
+		if board.IsSafe(row, col, digit) {
 			// 先填入 row, col 為 digit
 			board.Cells[row][col].Type = Preset
 			board.Cells[row][col].Value = digit
@@ -54,7 +54,7 @@ func solveCount(board *Board, limit int) int {
 	// 開始試著填入值找到解答
 	count := 0
 	for _, digit := range digitsShuffled() {
-		if board.isSafe(row, col, digit) {
+		if board.IsSafe(row, col, digit) {
 			// 先填入 row, col 為 digit
 			board.Cells[row][col].Type = Preset
 			board.Cells[row][col].Value = digit

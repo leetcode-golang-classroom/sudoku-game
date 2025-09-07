@@ -7,7 +7,9 @@ const (
 
 // Board - 盤面
 type Board struct {
-	Cells [BoardSize][BoardSize]*Cell
+	Cells     [BoardSize][BoardSize]*Cell
+	CursorRow int
+	CursorCol int
 }
 
 // NewBoard 建立一個空的數獨盤面
@@ -30,5 +32,33 @@ type Game struct {
 func NewGame() *Game {
 	return &Game{
 		Board: NewBoard(),
+	}
+}
+
+func (board *Board) IncreaseCursorRow() {
+	if board.CursorRow < BoardSize-1 {
+		board.CursorRow++
+		return
+	}
+}
+
+func (board *Board) DecreaseCursorRow() {
+	if board.CursorRow >= 1 {
+		board.CursorRow--
+		return
+	}
+}
+
+func (board *Board) IncreaseCursorCol() {
+	if board.CursorCol < BoardSize-1 {
+		board.CursorCol++
+		return
+	}
+}
+
+func (board *Board) DecreaseCursorCol() {
+	if board.CursorCol >= 1 {
+		board.CursorCol--
+		return
 	}
 }
