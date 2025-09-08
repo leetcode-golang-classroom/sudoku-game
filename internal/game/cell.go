@@ -13,5 +13,5 @@ const (
 // Cell 代表數獨的一個格子
 type Cell struct {
 	Value int      // 數字，0 表示空格
-	Type  CellType // 狀態：Empty、Preset、Input
+	Type  CellType // 狀態：Empty、Preset、Input、InputConflict
 }

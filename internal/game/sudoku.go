@@ -7,9 +7,12 @@ const (
 
 // Board - 盤面
 type Board struct {
-	Cells     [BoardSize][BoardSize]*Cell
-	CursorRow int
-	CursorCol int
+	Cells             [BoardSize][BoardSize]*Cell // 格子內容
+	CursorRow         int                         // Cursor row position
+	CursorCol         int                         // Cursor col position
+	TargetSolvedCount int                         // 需要解決的格子數 = 81 - clues
+	FilledCount       int                         // 目前填入格子數
+	ConflictCount     int                         // 不符合規則的格子數
 }
 
 // NewBoard 建立一個空的數獨盤面
@@ -61,4 +64,20 @@ func (board *Board) DecreaseCursorCol() {
 		board.CursorCol--
 		return
 	}
+}
+
+func (board *Board) IncreaseConflictCount() {
+	board.ConflictCount++
+}
+
+func (board *Board) DescreaseConflictCount() {
+	board.ConflictCount--
+}
+
+func (board *Board) IncreaseFilledCount() {
+	board.FilledCount++
+}
+
+func (board *Board) DecreaseFilledCount() {
+	board.FilledCount--
 }

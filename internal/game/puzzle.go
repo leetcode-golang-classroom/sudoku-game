@@ -42,7 +42,7 @@ func solveCount(board *Board, limit int) int {
 	// 找到第一個非空的格子來填
 	for r := 0; r < BoardSize && !found; r++ {
 		for c := 0; c < BoardSize && !found; c++ {
-			if board.Cells[r][c].Type == Empty {
+			if board.Cells[r][c].Type == Empty && board.Cells[r][c].Value == 0 {
 				row, col, found = r, c, true
 			}
 		}
@@ -90,7 +90,7 @@ func (board *Board) presetedCount() int {
 	count := 0
 	for row := 0; row < BoardSize; row++ {
 		for col := 0; col < BoardSize; col++ {
-			if board.Cells[row][col].Type == Preset {
+			if board.Cells[row][col].Type == Preset && board.Cells[row][col].Value != 0 {
 				count++
 			}
 		}
@@ -107,17 +107,18 @@ func (board *Board) MakePuzzleFromSolution(targetClues int) {
 			break
 		}
 		r, c := rc[0], rc[1]
-		if puzzle.Cells[r][c].Type == Empty {
+		if puzzle.Cells[r][c].Type == Empty && puzzle.Cells[r][c].Value == 0 {
 			continue
 		}
 		tmp := puzzle.Cells[r][c]
 		puzzle.Cells[r][c].Type = Empty
 		puzzle.Cells[r][c].Value = 0
-		if puzzle.hasUniqueSolution() {
+		if !puzzle.hasUniqueSolution() {
 			// 不是唯一解 → 復原
 			puzzle.Cells[r][c].Type = tmp.Type
 			puzzle.Cells[r][c].Value = tmp.Value
 		}
 	}
+	board.TargetSolvedCount = 81 - targetClues
 	board = &puzzle
 }

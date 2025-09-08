@@ -12,6 +12,7 @@ import (
 
 var (
 	mplusFaceSource *text.GoTextFaceSource
+	emojiFaceSource *text.GoTextFaceSource
 )
 
 func init() {
@@ -21,6 +22,11 @@ func init() {
 	}
 	mplusFaceSource = s
 
+	s, err = text.NewGoTextFaceSource(bytes.NewReader(fonts.NotoEmojiRegular_ttf))
+	if err != nil {
+		log.Fatal(err)
+	}
+	emojiFaceSource = s
 }
 
 func getTileColor(cellType game.CellType) color.Color {
@@ -45,6 +51,28 @@ func getTileBgColor(cellType game.CellType) color.Color {
 		return color.RGBA{0xCD, 0xC9, 0xC9, 0xFF}
 	case game.InputConflict: // 顯示粉紅
 		return color.RGBA{0xDC, 0x69, 0xB4, 0xFF}
+	default: // 其他都是預設 白色
+		return color.RGBA{0xFF, 0xFF, 0xFF, 0xFF}
+	}
+}
+
+type IconType int
+
+const (
+	RemainingCount IconType = iota
+	Playing
+	Win
+	Bug
+)
+
+func getIconColor(iconType IconType) color.Color {
+	switch iconType {
+	case RemainingCount: // 顯示亮灰色
+		return color.RGBA{0xCD, 0xC9, 0xC9, 0xFF}
+	case Playing, Bug: // Green
+		return color.RGBA{0x22, 0x8B, 0x22, 0xFF}
+	case Win: // Gold
+		return color.RGBA{0xFF, 0xD7, 0x00, 0xFF}
 	default: // 其他都是預設 白色
 		return color.RGBA{0xFF, 0xFF, 0xFF, 0xFF}
 	}

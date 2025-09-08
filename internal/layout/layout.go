@@ -11,8 +11,9 @@ import (
 )
 
 const (
+	PanelHeight    = 100 // 上方面板高度
 	ScreenWidth    = 450
-	ScreenHeight   = 450
+	ScreenHeight   = PanelHeight + 450
 	cellSize       = 50
 	thinkLineWidth = 3
 	leanLineWidth  = 1
@@ -21,18 +22,28 @@ const (
 type GameLayout struct {
 	gameInstance *game.Game
 	difficulty   game.Difficulty
+	isPlayerWin  bool
 }
 
 func (gameLayout *GameLayout) Update() error {
+	if gameLayout.isPlayerWin {
+		return nil
+	}
 	gameLayout.DetectCursor()
 	gameLayout.DetectInput()
+	// 檢查狀態
+	gameLayout.isPlayerWin = gameLayout.checkIfPlayerWin()
 	return nil
 }
 
 func (gameLayout *GameLayout) Draw(screen *ebiten.Image) {
 	// 畫出基本背景
 	gameLayout.drawBoardBackground(screen)
-	// // 畫出 cursor
+	// 畫出目前狀態面板
+	gameLayout.drawRemainingUnsolvedCount(screen)
+	gameLayout.drawBugCount(screen)
+	gameLayout.drawBoardStatus(screen)
+	// 畫出 cursor
 	gameLayout.drawCursor(screen)
 	// 根據遊戲狀態來畫出盤面
 	gameLayout.drawCellValuesOnBoard(screen)
@@ -40,6 +51,7 @@ func (gameLayout *GameLayout) Draw(screen *ebiten.Image) {
 	gameLayout.drawLinesOnBoard(screen)
 }
 
+// drawCursor - 繪製游標
 func (gameLayout *GameLayout) drawCursor(screen *ebiten.Image) {
 	cursorBgColor := color.RGBA{0xff, 0, 0, 128}
 	targetRow := gameLayout.gameInstance.Board.CursorRow
@@ -85,7 +97,6 @@ func (gameLayout *GameLayout) drawCellValuesOnBoard(screen *ebiten.Image) {
 					getTileColor(board.Cells[row][col].Type),
 				)
 			}
-			// TODO: draw input
 		}
 	}
 }
@@ -105,9 +116,9 @@ func (gameLayout *GameLayout) drawLinesOnBoard(screen *ebiten.Image) {
 			lineWidth = thinkLineWidth
 		}
 		// 畫直線
-		ebitenUtilDrawLine(screen, x, 0, x, ScreenHeight, lineColor, lineWidth)
+		ebitenUtilDrawLine(screen, x, PanelHeight+0, x, ScreenHeight, lineColor, lineWidth)
 		// 畫橫線
-		ebitenUtilDrawLine(screen, 0, y, ScreenWidth, y, lineColor, lineWidth)
+		ebitenUtilDrawLine(screen, 0, PanelHeight+y, ScreenWidth, PanelHeight+y, lineColor, lineWidth)
 	}
 }
 
@@ -134,6 +145,7 @@ func NewGameLayout() *GameLayout {
 	return &GameLayout{
 		gameInstance: gameInstance,
 		difficulty:   defaultDifficulty,
+		isPlayerWin:  false,
 	}
 }
 
@@ -142,7 +154,7 @@ func (*GameLayout) drawCellValue(screen *ebiten.Image, row, col, value int, numC
 	// 繪製數字 (置中)
 	textValue := fmt.Sprintf("%d", value)
 	textXPos := col*cellSize + (cellSize)/2
-	textYPos := row*cellSize + (cellSize)/2
+	textYPos := PanelHeight + row*cellSize + (cellSize)/2
 	if col%3 == 0 {
 		textXPos += thinkLineWidth
 	} else {
@@ -167,7 +179,7 @@ func (*GameLayout) drawCellValue(screen *ebiten.Image, row, col, value int, numC
 // drawCellBackground - 繪圖出目前盤面的情況
 func (*GameLayout) drawCellBackground(screen *ebiten.Image, row, col int, bgColor color.Color) {
 	xPos := col * cellSize
-	yPos := row * cellSize
+	yPos := PanelHeight + row*cellSize
 	if col%3 == 0 {
 		xPos += thinkLineWidth
 	} else {
@@ -187,4 +199,104 @@ func (*GameLayout) drawCellBackground(screen *ebiten.Image, row, col int, bgColo
 		bgColor,
 		false,
 	)
+}
+
+func (gameLayout *GameLayout) drawRemainingUnsolvedCount(screen *ebiten.Image) {
+	board := gameLayout.gameInstance.Board
+	emojiValue := "⬜"
+	emojiXPos := len(emojiValue)
+	emojiYPos := cellSize / 2
+	emojiOpts := &text.DrawOptions{}
+	emojiOpts.ColorScale.ScaleWithColor(getIconColor(RemainingCount))
+	emojiOpts.PrimaryAlign = text.AlignStart
+	emojiOpts.SecondaryAlign = text.AlignCenter
+	emojiOpts.GeoM.Translate(float64(emojiXPos), float64(emojiYPos))
+	text.Draw(screen, emojiValue, &text.GoTextFace{
+		Source: emojiFaceSource,
+		Size:   30,
+	}, emojiOpts)
+	value := board.TargetSolvedCount - board.FilledCount
+	textValue := fmt.Sprintf(": %03d", value)
+	textXPos := cellSize
+	textYPos := cellSize / 2
+	textOpts := &text.DrawOptions{}
+	textOpts.ColorScale.ScaleWithColor(color.Black)
+	textOpts.PrimaryAlign = text.AlignStart
+	textOpts.SecondaryAlign = text.AlignCenter
+	textOpts.GeoM.Translate(float64(textXPos), float64(textYPos))
+	text.Draw(screen, textValue, &text.GoTextFace{
+		Source: mplusFaceSource,
+		Size:   25,
+	}, textOpts)
+}
+
+func (gameLayout *GameLayout) drawBugCount(screen *ebiten.Image) {
+	board := gameLayout.gameInstance.Board
+	emojiValue := "🐛"
+	emojiXPos := cellSize*3 + len(emojiValue)
+	emojiYPos := cellSize / 2
+	emojiOpts := &text.DrawOptions{}
+	emojiOpts.ColorScale.ScaleWithColor(getIconColor(Bug))
+	emojiOpts.PrimaryAlign = text.AlignStart
+	emojiOpts.SecondaryAlign = text.AlignCenter
+	emojiOpts.GeoM.Translate(float64(emojiXPos), float64(emojiYPos))
+	text.Draw(screen, emojiValue, &text.GoTextFace{
+		Source: emojiFaceSource,
+		Size:   30,
+	}, emojiOpts)
+	value := board.ConflictCount
+	textValue := fmt.Sprintf(": %03d", value)
+	textXPos := 4 * cellSize
+	textYPos := cellSize / 2
+	textOpts := &text.DrawOptions{}
+	textOpts.ColorScale.ScaleWithColor(color.Black)
+	textOpts.PrimaryAlign = text.AlignStart
+	textOpts.SecondaryAlign = text.AlignCenter
+	textOpts.GeoM.Translate(float64(textXPos), float64(textYPos))
+	text.Draw(screen, textValue, &text.GoTextFace{
+		Source: mplusFaceSource,
+		Size:   25,
+	}, textOpts)
+}
+
+// checkIfPlayerWin - 檢查勝利狀態
+func (gameLayout *GameLayout) checkIfPlayerWin() bool {
+	board := gameLayout.gameInstance.Board
+	remainingCount := board.TargetSolvedCount - board.FilledCount
+	conflictCount := board.ConflictCount
+	return remainingCount == 0 && conflictCount == 0
+}
+
+func (gameLayout *GameLayout) drawBoardStatus(screen *ebiten.Image) {
+	emojiValue := "⏳"
+	message := "Keep going"
+	iconColor := getIconColor(Playing)
+	if gameLayout.isPlayerWin {
+		emojiValue = "🏆"
+		message = "You Win！"
+		iconColor = getIconColor(Win)
+	}
+	emojiXPos := len(emojiValue)
+	emojiYPos := cellSize + cellSize/2
+	emojiOpts := &text.DrawOptions{}
+	emojiOpts.ColorScale.ScaleWithColor(iconColor)
+	emojiOpts.PrimaryAlign = text.AlignStart
+	emojiOpts.SecondaryAlign = text.AlignCenter
+	emojiOpts.GeoM.Translate(float64(emojiXPos), float64(emojiYPos))
+	text.Draw(screen, emojiValue, &text.GoTextFace{
+		Source: emojiFaceSource,
+		Size:   30,
+	}, emojiOpts)
+	textValue := message
+	textXPos := cellSize
+	textYPos := cellSize + cellSize/2
+	textOpts := &text.DrawOptions{}
+	textOpts.ColorScale.ScaleWithColor(color.Black)
+	textOpts.PrimaryAlign = text.AlignStart
+	textOpts.SecondaryAlign = text.AlignCenter
+	textOpts.GeoM.Translate(float64(textXPos), float64(textYPos))
+	text.Draw(screen, textValue, &text.GoTextFace{
+		Source: mplusFaceSource,
+		Size:   25,
+	}, textOpts)
 }
