@@ -92,3 +92,15 @@ func handleNonConflict(board *game.Board, cellType game.CellType,
 	// 標示為 Input
 	board.Cells[targetRow][targetCol].Type = game.Input
 }
+
+// handleRestartButton
+func (gameLayout *GameLayout) handleRestartButton() {
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		xPos, yPos := ebiten.CursorPosition()
+		if (xPos >= 8*cellSize && xPos <= 9*cellSize) &&
+			(yPos >= cellSize && yPos <= 2*cellSize) {
+			gameLayout.gameInstance.Board.ResetBoardToDefault()
+		}
+	}
+	gameLayout.isPlayerWin = gameLayout.checkIfPlayerWin()
+}

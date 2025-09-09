@@ -81,3 +81,17 @@ func (board *Board) IncreaseFilledCount() {
 func (board *Board) DecreaseFilledCount() {
 	board.FilledCount--
 }
+
+// ResetBoardToDefault - 重開始功能
+func (board *Board) ResetBoardToDefault() {
+	for row := 0; row < BoardSize; row++ {
+		for col := 0; col < BoardSize; col++ {
+			if board.Cells[row][col].Type != Preset {
+				board.Cells[row][col].Type = Empty
+				board.Cells[row][col].Value = 0
+			}
+		}
+	}
+	board.FilledCount = 0
+	board.ConflictCount = 0
+}

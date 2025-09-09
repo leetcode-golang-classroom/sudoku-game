@@ -63,13 +63,15 @@ const (
 	Playing
 	Win
 	Bug
+	Restart
+	Button
 )
 
 func getIconColor(iconType IconType) color.Color {
 	switch iconType {
-	case RemainingCount: // 顯示亮灰色
+	case RemainingCount, Button: // 顯示亮灰色
 		return color.RGBA{0xCD, 0xC9, 0xC9, 0xFF}
-	case Playing, Bug: // Green
+	case Playing, Bug, Restart: // Green
 		return color.RGBA{0x22, 0x8B, 0x22, 0xFF}
 	case Win: // Gold
 		return color.RGBA{0xFF, 0xD7, 0x00, 0xFF}

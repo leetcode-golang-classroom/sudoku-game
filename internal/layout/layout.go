@@ -26,6 +26,7 @@ type GameLayout struct {
 }
 
 func (gameLayout *GameLayout) Update() error {
+	gameLayout.handleRestartButton()
 	if gameLayout.isPlayerWin {
 		return nil
 	}
@@ -43,6 +44,7 @@ func (gameLayout *GameLayout) Draw(screen *ebiten.Image) {
 	gameLayout.drawRemainingUnsolvedCount(screen)
 	gameLayout.drawBugCount(screen)
 	gameLayout.drawBoardStatus(screen)
+	gameLayout.drawRestartButton(screen)
 	// 畫出 cursor
 	gameLayout.drawCursor(screen)
 	// 根據遊戲狀態來畫出盤面
@@ -267,6 +269,7 @@ func (gameLayout *GameLayout) checkIfPlayerWin() bool {
 	return remainingCount == 0 && conflictCount == 0
 }
 
+// drawBoardStatus - 根據是否勝利來畫出不同的提示詞
 func (gameLayout *GameLayout) drawBoardStatus(screen *ebiten.Image) {
 	emojiValue := "⏳"
 	message := "Keep going"
@@ -299,4 +302,24 @@ func (gameLayout *GameLayout) drawBoardStatus(screen *ebiten.Image) {
 		Source: mplusFaceSource,
 		Size:   25,
 	}, textOpts)
+}
+
+// drawRestartButton - 繪製重新開始的 Button
+func (gameLayout *GameLayout) drawRestartButton(screen *ebiten.Image) {
+	vector.DrawFilledCircle(screen, float32(8*cellSize+cellSize/2), cellSize+cellSize/2, 25,
+		getIconColor(Button),
+		true,
+	)
+	emojiValue := "🔃"
+	emojiXPos := 8*cellSize + len(emojiValue)
+	emojiYPos := cellSize + cellSize/2
+	emojiOpts := &text.DrawOptions{}
+	emojiOpts.ColorScale.ScaleWithColor(getIconColor(Restart))
+	emojiOpts.PrimaryAlign = text.AlignStart
+	emojiOpts.SecondaryAlign = text.AlignCenter
+	emojiOpts.GeoM.Translate(float64(emojiXPos), float64(emojiYPos))
+	text.Draw(screen, emojiValue, &text.GoTextFace{
+		Source: emojiFaceSource,
+		Size:   30,
+	}, emojiOpts)
 }
