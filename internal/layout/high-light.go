@@ -17,6 +17,7 @@ func (gameLayout *GameLayout) drawHighLightCell(screen *ebiten.Image, row, col i
 	if row == cursorRow && col == cursorCol {
 		return
 	}
+
 	// highLight relative row, col
 	if row == cursorRow || col == cursorCol {
 		gameLayout.drawHighLightCover(screen, row, col)
@@ -35,6 +36,17 @@ func (gameLayout *GameLayout) drawHighLightCell(screen *ebiten.Image, row, col i
 				break
 			}
 		}
+	}
+	// hightLight Same Value
+	cursorCell := board.Cells[cursorRow][cursorCol]
+	targetCell := board.Cells[row][col]
+	// 空值則跳過
+	if cursorCell.Type == game.Empty || targetCell.Type == game.Empty {
+		return
+	}
+
+	if cursorCell.Value == targetCell.Value {
+		gameLayout.drawHighLightCover(screen, row, col)
 	}
 }
 
