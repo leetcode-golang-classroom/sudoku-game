@@ -65,6 +65,7 @@ const (
 	Bug
 	Restart
 	Button
+	IsClock
 )
 
 func getIconColor(iconType IconType) color.Color {
@@ -73,7 +74,7 @@ func getIconColor(iconType IconType) color.Color {
 		return color.RGBA{0xCD, 0xC9, 0xC9, 0xFF}
 	case Playing, Bug, Restart: // Green
 		return color.RGBA{0x22, 0x8B, 0x22, 0xFF}
-	case Win: // Gold
+	case Win, IsClock: // Gold
 		return color.RGBA{0xFF, 0xD7, 0x00, 0xFF}
 	default: // 其他都是預設 白色
 		return color.RGBA{0xFF, 0xFF, 0xFF, 0xFF}

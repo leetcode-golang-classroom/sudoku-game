@@ -1,5 +1,7 @@
 package game
 
+import "time"
+
 const (
 	BoardSize = 9
 	BoxSize   = 3
@@ -28,14 +30,20 @@ func NewBoard() *Board {
 
 // Game - 遊戲結構
 type Game struct {
-	Board *Board
+	Board     *Board
+	StartTime time.Time // 遊戲開始時間
 }
 
 // NewGame - 建構遊戲結構
 func NewGame() *Game {
 	return &Game{
-		Board: NewBoard(),
+		Board:     NewBoard(),
+		StartTime: time.Now().UTC(),
 	}
+}
+
+func (game *Game) GetElaspedTime() int {
+	return int(time.Since(game.StartTime).Seconds())
 }
 
 func (board *Board) IncreaseCursorRow() {

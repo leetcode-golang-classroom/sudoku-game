@@ -1,6 +1,8 @@
 package layout
 
 import (
+	"time"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/leetcode-golang-classroom/sudoku-game/internal/game"
@@ -100,6 +102,7 @@ func (gameLayout *GameLayout) handleRestartButton() {
 		if (xPos >= 8*cellSize && xPos <= 9*cellSize) &&
 			(yPos >= cellSize && yPos <= 2*cellSize) {
 			gameLayout.gameInstance.Board.ResetBoardToDefault()
+			gameLayout.gameInstance.StartTime = time.Now().UTC()
 		}
 	}
 	gameLayout.isPlayerWin = gameLayout.checkIfPlayerWin()

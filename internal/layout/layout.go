@@ -3,6 +3,7 @@ package layout
 import (
 	"fmt"
 	"image/color"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
@@ -20,9 +21,10 @@ const (
 )
 
 type GameLayout struct {
-	gameInstance *game.Game
-	difficulty   game.Difficulty
-	isPlayerWin  bool
+	gameInstance   *game.Game
+	difficulty     game.Difficulty
+	isPlayerWin    bool
+	elapsedSeconds int
 }
 
 func (gameLayout *GameLayout) Update() error {
@@ -30,6 +32,7 @@ func (gameLayout *GameLayout) Update() error {
 	if gameLayout.isPlayerWin {
 		return nil
 	}
+	gameLayout.elapsedSeconds = gameLayout.gameInstance.GetElaspedTime()
 	gameLayout.DetectCursor()
 	gameLayout.DetectInput()
 	// 檢查狀態
@@ -45,6 +48,7 @@ func (gameLayout *GameLayout) Draw(screen *ebiten.Image) {
 	gameLayout.drawBugCount(screen)
 	gameLayout.drawBoardStatus(screen)
 	gameLayout.drawRestartButton(screen)
+	gameLayout.drawTimeLayout(screen)
 	// 畫出 cursor
 	gameLayout.drawCursor(screen)
 	// 根據遊戲狀態來畫出盤面
@@ -144,6 +148,7 @@ func NewGameLayout() *GameLayout {
 	gameInstance.Board.GenerateSolution()
 	defaultDifficulty := game.Easy
 	gameInstance.Board.MakePuzzleFromSolution(int(defaultDifficulty))
+	gameInstance.StartTime = time.Now().UTC()
 	return &GameLayout{
 		gameInstance: gameInstance,
 		difficulty:   defaultDifficulty,
