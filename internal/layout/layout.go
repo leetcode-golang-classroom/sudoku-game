@@ -12,12 +12,14 @@ import (
 )
 
 const (
-	PanelHeight    = 100 // 上方面板高度
-	ScreenWidth    = 450
-	ScreenHeight   = PanelHeight + 450
-	cellSize       = 50
-	thinkLineWidth = 3
-	leanLineWidth  = 1
+	PanelHeight     = 100 // 上方面板高度
+	BoardWidth      = 450
+	InputPanelWidth = 200
+	ScreenWidth     = BoardWidth + InputPanelWidth
+	ScreenHeight    = PanelHeight + 450
+	cellSize        = 50
+	thinkLineWidth  = 3
+	leanLineWidth   = 1
 )
 
 type GameLayout struct {
@@ -33,6 +35,7 @@ func (gameLayout *GameLayout) Update() error {
 	if gameLayout.isPlayerWin {
 		return nil
 	}
+	gameLayout.detectClearHandler()
 	gameLayout.detectClickCell()
 	gameLayout.elapsedSeconds = gameLayout.gameInstance.GetElaspedTime()
 	gameLayout.DetectCursor()
@@ -52,6 +55,7 @@ func (gameLayout *GameLayout) Draw(screen *ebiten.Image) {
 	gameLayout.drawRestartButton(screen)
 	gameLayout.drawTimeLayout(screen)
 	gameLayout.drawLevelButtonWithIcon(screen)
+	gameLayout.drawClearButton(screen)
 	// 畫出 cursor
 	gameLayout.drawCursor(screen)
 	// 根據遊戲狀態來畫出盤面
@@ -129,7 +133,7 @@ func (gameLayout *GameLayout) drawLinesOnBoard(screen *ebiten.Image) {
 		// 畫直線
 		ebitenUtilDrawLine(screen, x, PanelHeight+0, x, ScreenHeight, lineColor, lineWidth)
 		// 畫橫線
-		ebitenUtilDrawLine(screen, 0, PanelHeight+y, ScreenWidth, PanelHeight+y, lineColor, lineWidth)
+		ebitenUtilDrawLine(screen, 0, PanelHeight+y, BoardWidth, PanelHeight+y, lineColor, lineWidth)
 	}
 }
 
@@ -316,12 +320,12 @@ func (gameLayout *GameLayout) drawBoardStatus(screen *ebiten.Image) {
 
 // drawRestartButton - 繪製重新開始的 Button
 func (gameLayout *GameLayout) drawRestartButton(screen *ebiten.Image) {
-	vector.DrawFilledCircle(screen, float32(8*cellSize+cellSize/2), cellSize+cellSize/2, 25,
+	vector.DrawFilledCircle(screen, float32(ScreenWidth-cellSize/2), cellSize+cellSize/2, 25,
 		getIconColor(Button),
 		true,
 	)
 	emojiValue := "🔃"
-	emojiXPos := 8*cellSize + len(emojiValue)
+	emojiXPos := ScreenWidth - cellSize + len(emojiValue)
 	emojiYPos := cellSize + cellSize/2
 	emojiOpts := &text.DrawOptions{}
 	emojiOpts.ColorScale.ScaleWithColor(getIconColor(Restart))

@@ -99,7 +99,7 @@ func handleNonConflict(board *game.Board, cellType game.CellType,
 func (gameLayout *GameLayout) handleRestartButton() {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		xPos, yPos := ebiten.CursorPosition()
-		if (xPos >= 8*cellSize && xPos <= 9*cellSize) &&
+		if (xPos >= ScreenWidth-cellSize && xPos <= ScreenWidth) &&
 			(yPos >= cellSize && yPos <= 2*cellSize) {
 			gameLayout.gameInstance.Board.ResetBoardToDefault()
 			gameLayout.gameInstance.StartTime = time.Now().UTC()
@@ -112,7 +112,7 @@ func (gameLayout *GameLayout) handleRestartButton() {
 func (gameLayout *GameLayout) handleToggleLevelDifficultButton() {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		xPos, yPos := ebiten.CursorPosition()
-		if (xPos >= 4*cellSize && xPos <= 5*cellSize) &&
+		if (xPos >= ScreenWidth/2-cellSize/2 && xPos <= ScreenWidth/2+cellSize/2) &&
 			(yPos >= cellSize && yPos <= 2*cellSize) {
 			gameLayout.difficultyLevel = (gameLayout.difficultyLevel + 1) % len(difficultyOptions)
 			gameLayout.ResetGameWithLevel()
