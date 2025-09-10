@@ -36,6 +36,7 @@ func (gameLayout *GameLayout) Update() error {
 		return nil
 	}
 	gameLayout.detectClearHandler()
+	gameLayout.detectNumberButtonHandler()
 	gameLayout.detectClickCell()
 	gameLayout.elapsedSeconds = gameLayout.gameInstance.GetElaspedTime()
 	gameLayout.DetectCursor()
@@ -56,6 +57,7 @@ func (gameLayout *GameLayout) Draw(screen *ebiten.Image) {
 	gameLayout.drawTimeLayout(screen)
 	gameLayout.drawLevelButtonWithIcon(screen)
 	gameLayout.drawClearButton(screen)
+	gameLayout.drawNumberButtons(screen)
 	// 畫出 cursor
 	gameLayout.drawCursor(screen)
 	// 根據遊戲狀態來畫出盤面
