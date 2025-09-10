@@ -107,3 +107,16 @@ func (gameLayout *GameLayout) handleRestartButton() {
 	}
 	gameLayout.isPlayerWin = gameLayout.checkIfPlayerWin()
 }
+
+// handleToggleLevelDifficultButton
+func (gameLayout *GameLayout) handleToggleLevelDifficultButton() {
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		xPos, yPos := ebiten.CursorPosition()
+		if (xPos >= 4*cellSize && xPos <= 5*cellSize) &&
+			(yPos >= cellSize && yPos <= 2*cellSize) {
+			gameLayout.difficultyLevel = (gameLayout.difficultyLevel + 1) % len(difficultyOptions)
+			gameLayout.ResetGameWithLevel()
+		}
+	}
+	gameLayout.isPlayerWin = gameLayout.checkIfPlayerWin()
+}

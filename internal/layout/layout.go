@@ -21,14 +21,15 @@ const (
 )
 
 type GameLayout struct {
-	gameInstance   *game.Game
-	difficulty     game.Difficulty
-	isPlayerWin    bool
-	elapsedSeconds int
+	gameInstance    *game.Game
+	difficultyLevel int
+	isPlayerWin     bool
+	elapsedSeconds  int
 }
 
 func (gameLayout *GameLayout) Update() error {
 	gameLayout.handleRestartButton()
+	gameLayout.handleToggleLevelDifficultButton()
 	if gameLayout.isPlayerWin {
 		return nil
 	}
@@ -49,6 +50,7 @@ func (gameLayout *GameLayout) Draw(screen *ebiten.Image) {
 	gameLayout.drawBoardStatus(screen)
 	gameLayout.drawRestartButton(screen)
 	gameLayout.drawTimeLayout(screen)
+	gameLayout.drawLevelButtonWithIcon(screen)
 	// 畫出 cursor
 	gameLayout.drawCursor(screen)
 	// 根據遊戲狀態來畫出盤面
@@ -146,13 +148,13 @@ func (gameLayout *GameLayout) Layout(outsideWidth, outsideHeight int) (int, int)
 func NewGameLayout() *GameLayout {
 	gameInstance := game.NewGame()
 	gameInstance.Board.GenerateSolution()
-	defaultDifficulty := game.Easy
+	defaultDifficulty := difficultyOptions[0]
 	gameInstance.Board.MakePuzzleFromSolution(int(defaultDifficulty))
 	gameInstance.StartTime = time.Now().UTC()
 	return &GameLayout{
-		gameInstance: gameInstance,
-		difficulty:   defaultDifficulty,
-		isPlayerWin:  false,
+		gameInstance:    gameInstance,
+		difficultyLevel: 0,
+		isPlayerWin:     false,
 	}
 }
 
@@ -223,7 +225,7 @@ func (gameLayout *GameLayout) drawRemainingUnsolvedCount(screen *ebiten.Image) {
 		Size:   30,
 	}, emojiOpts)
 	value := board.TargetSolvedCount - board.FilledCount
-	textValue := fmt.Sprintf(": %03d", value)
+	textValue := fmt.Sprintf("%03d", value)
 	textXPos := cellSize
 	textYPos := cellSize / 2
 	textOpts := &text.DrawOptions{}
@@ -233,7 +235,7 @@ func (gameLayout *GameLayout) drawRemainingUnsolvedCount(screen *ebiten.Image) {
 	textOpts.GeoM.Translate(float64(textXPos), float64(textYPos))
 	text.Draw(screen, textValue, &text.GoTextFace{
 		Source: mplusFaceSource,
-		Size:   25,
+		Size:   30,
 	}, textOpts)
 }
 
@@ -252,7 +254,7 @@ func (gameLayout *GameLayout) drawBugCount(screen *ebiten.Image) {
 		Size:   30,
 	}, emojiOpts)
 	value := board.ConflictCount
-	textValue := fmt.Sprintf(": %03d", value)
+	textValue := fmt.Sprintf("%03d", value)
 	textXPos := 4 * cellSize
 	textYPos := cellSize / 2
 	textOpts := &text.DrawOptions{}
@@ -262,7 +264,7 @@ func (gameLayout *GameLayout) drawBugCount(screen *ebiten.Image) {
 	textOpts.GeoM.Translate(float64(textXPos), float64(textYPos))
 	text.Draw(screen, textValue, &text.GoTextFace{
 		Source: mplusFaceSource,
-		Size:   25,
+		Size:   30,
 	}, textOpts)
 }
 
@@ -327,4 +329,13 @@ func (gameLayout *GameLayout) drawRestartButton(screen *ebiten.Image) {
 		Source: emojiFaceSource,
 		Size:   30,
 	}, emojiOpts)
+}
+
+func (gameLayout *GameLayout) ResetGameWithLevel() {
+	gameInstance := game.NewGame()
+	gameInstance.Board.GenerateSolution()
+	defaultDifficulty := difficultyOptions[gameLayout.difficultyLevel]
+	gameInstance.Board.MakePuzzleFromSolution(int(defaultDifficulty))
+	gameInstance.StartTime = time.Now().UTC()
+	gameLayout.gameInstance = gameInstance
 }

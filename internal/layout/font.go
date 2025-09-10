@@ -66,10 +66,13 @@ const (
 	Restart
 	Button
 	IsClock
+	DarkButton
 )
 
 func getIconColor(iconType IconType) color.Color {
 	switch iconType {
+	case DarkButton: // 顯示暗藍色
+		return color.RGBA{0x70, 0x80, 0x90, 0xff}
 	case RemainingCount, Button: // 顯示亮灰色
 		return color.RGBA{0xCD, 0xC9, 0xC9, 0xFF}
 	case Playing, Bug, Restart: // Green
