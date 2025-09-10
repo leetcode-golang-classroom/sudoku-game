@@ -33,6 +33,7 @@ func (gameLayout *GameLayout) Update() error {
 	if gameLayout.isPlayerWin {
 		return nil
 	}
+	gameLayout.detectClickCell()
 	gameLayout.elapsedSeconds = gameLayout.gameInstance.GetElaspedTime()
 	gameLayout.DetectCursor()
 	gameLayout.DetectInput()
@@ -105,6 +106,8 @@ func (gameLayout *GameLayout) drawCellValuesOnBoard(screen *ebiten.Image) {
 					getTileColor(board.Cells[row][col].Type),
 				)
 			}
+			// highlight background
+			gameLayout.drawHighLightCell(screen, row, col)
 		}
 	}
 }
