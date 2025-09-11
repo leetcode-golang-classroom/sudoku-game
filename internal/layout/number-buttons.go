@@ -64,10 +64,10 @@ func (gameLayout *GameLayout) clearCursorValue() {
 func (gameLayout *GameLayout) detectClearHandler() {
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		xPos, yPos := ebiten.CursorPosition()
-		xPos -= BoardWidth
+		xPos -= BoardWidth + buttonRectRelativePos.Min.X
 		yPos -= (ScreenHeight - 5*cellSize)
 		// detect range
-		if xPos >= buttonRectRelativePos.Min.X && xPos <= buttonRectRelativePos.Dx() &&
+		if xPos >= 0 && xPos <= buttonRectRelativePos.Dx() &&
 			yPos >= 0 && yPos <= buttonRectRelativePos.Dy() {
 			gameLayout.clearCursorValue()
 		}
