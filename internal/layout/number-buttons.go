@@ -115,8 +115,8 @@ func (gameLayout *GameLayout) detectNumberButtonHandler() {
 		// detect range
 		if xPos >= 0 && xPos <= 3*cellSize &&
 			yPos >= 0 && yPos <= 3*cellSize {
-			row := (yPos / cellSize) % cellSize
-			col := (xPos / cellSize) % cellSize
+			row := (yPos / cellSize) % game.BoxSize
+			col := (xPos / cellSize) % game.BoxSize
 			gameLayout.handleNumberButtonClick(row, col)
 		}
 		return
