@@ -65,6 +65,9 @@ func handleKeyInput(board *game.Board, targetCell *game.Cell, key ebiten.Key,
 		board.IncreaseFilledCount()
 	}
 	safed := board.IsSafe(targetRow, targetCol, value)
+	if targetCell.Value == value {
+		return
+	}
 	if !safed {
 		handleConflict(board, cellType, targetRow, targetCol)
 	} else {
