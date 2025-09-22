@@ -74,7 +74,7 @@ func solveCount(board *Board, limit int) int {
 
 // hasUniqueSolution - 是否具有唯一解
 func (board *Board) hasUniqueSolution() bool {
-	copyBoard := *board
+	copyBoard := board.Clone()
 	count := solveCount(&copyBoard, 2)
 	return count == 1
 }
