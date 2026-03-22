@@ -15,6 +15,7 @@ type Board struct {
 	TargetSolvedCount int                         // 需要解決的格子數 = 81 - clues
 	FilledCount       int                         // 目前填入格子數
 	ConflictCount     int                         // 不符合規則的格子數
+	Digits            []int                       // 搜尋時使用的數字順序
 }
 
 // NewBoard 建立一個空的數獨盤面

@@ -28,6 +28,12 @@ func (board *Board) IsSafe(row, col, num int) bool {
 
 func (board *Board) Clone() Board {
 	copyBoard := *board
+	for row := 0; row < BoardSize; row++ {
+		for col := 0; col < BoardSize; col++ {
+			cell := *board.Cells[row][col]
+			copyBoard.Cells[row][col] = &cell
+		}
+	}
 	return copyBoard
 }
 
